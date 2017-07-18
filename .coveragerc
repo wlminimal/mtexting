@@ -1,0 +1,5 @@
+[run]
+include = mtexting/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
