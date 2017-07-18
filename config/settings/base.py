@@ -63,7 +63,8 @@ LOCAL_APPS = [
     # custom users app
     'mtexting.users.apps.UsersConfig',
     # Your stuff: custom apps go here
-    'mtexting.plan.apps.PlanConfig'
+    'mtexting.plan.apps.PlanConfig',
+    'mtexting.payment.apps.PaymentConfig',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -278,3 +279,6 @@ ADMIN_URL = r'^admin/'
 
 TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = env('TWILIO_AUTH_TOKEN')
+
+STRIPE_PUBLIC_TOKEN = env('STRIPE_PUBLIC_TOKEN')
+STRIPE_PRIVATE_TOKEN = env('STRIPE_PRIVATE_TOKEN')

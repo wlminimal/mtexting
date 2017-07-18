@@ -7,4 +7,4 @@ class CreditAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Credit', {'fields': ('point',)}),
     )
-    list_display = ['user', 'point']
+    list_display = ['user', 'point', ]

@@ -17,8 +17,8 @@ class User(AbstractUser):
                                   message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     mobile_number = models.CharField(_('Mobile Number'), blank=True, validators=[mobile_regex]
                                      ,max_length=15)
-    account_sid = models.CharField(_('Account SID'), blank=True, max_length=255)
-    account_name = models.CharField(_('Account Name'), blank=True, max_length=255)
+    account_sid = models.CharField(_('Account SID'), blank=True, max_length=255, default="twilio_sid")
+    account_name = models.CharField(_('Account Name'), blank=True, max_length=255, default="account name")
 
     def __str__(self):
         return self.username

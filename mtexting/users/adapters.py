@@ -34,6 +34,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
         client = Client(account_sid, auth_token)
 
+        # Twilio sub account
         account = client.api.accounts.create(friendly_name=user.username)
         user.account_sid = account.sid
         user.account_name = account.friendly_name
@@ -42,6 +43,7 @@ class AccountAdapter(DefaultAccountAdapter):
             user.save()
 
         credit = Credit.objects.create(user=user)
+
         return user
 
 
