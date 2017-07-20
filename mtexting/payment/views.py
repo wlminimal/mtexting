@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 import stripe
 
@@ -10,35 +12,51 @@ def checkout(request):
 
     if request.method == 'POST':
         token = request.POST.get('stripeToken')
+        charge = stripe.Charge.create(
+            amount=5000,
+            description="mTexting",
+            source=token,
+            currency="usd"
+        )
+        # Send Email?
 
-        try:
-            charge = stripe.charge.create(
-                amount=5000,
-                description="mTexting",
-                source=token,
-                currency="usd"
-            )
-        except stripe.error.CardError as e:
-            # Since it's a decline, stripe.error.CardError will be caught
-            body = e.json_body
-            err = body['error']
-        except stripe.error.RateLimitError as e:
-            # Too many requests made to the API too quickly
-          pass
-        except stripe.error.InvalidRequestError as e:
-          # Invalid parameters were supplied to Stripe's API
-          pass
-        except stripe.error.AuthenticationError as e:
-          # Authentication with Stripe's API failed
-          # (maybe you changed API keys recently)
-          pass
-        except stripe.error.APIConnectionError as e:
-          # Network communication with Stripe failed
-          pass
-        except stripe.error.StripeError as e:
-          # Display a very generic error to the user, and maybe send
-          # yourself an email
-          pass
-        except Exception as e:
-          # Something else happened, completely unrelated to Stripe
-          pass
+        return HttpResponseRedirect(reverse('thank-you'))
+        # try:
+        #     charge = stripe.charge.create(
+        #         amount=5000,
+        #         description="mTexting",
+        #         source=token,
+        #         currency="usd"
+        #     )
+        #     # Send Email?
+        #
+        #     return HttpResponseRedirect(reverse('thank-you'))
+        #
+        # except stripe.error.CardError as e:
+        #     # Since it's a decline, stripe.error.CardError will be caught
+        #     body = e.json_body
+        #     err = body['error']
+        #
+        #     return HttpResponseRedirect(reverse('declined'))
+        # except stripe.error.RateLimitError as e:
+        #     # Too many requests made to the API too quickly
+        #     return HttpResponseRedirect(reverse('payment-error'))
+        # except stripe.error.InvalidRequestError as e:
+        #     # Invalid parameters were supplied to Stripe's API
+        #     return HttpResponseRedirect(reverse('payment-error'))
+        # except stripe.error.AuthenticationError as e:
+        #     # Authentication with Stripe's API failed
+        #     # (maybe you changed API keys recently)
+        #     return HttpResponseRedirect(reverse('payment-error'))
+        # except stripe.error.APIConnectionError as e:
+        #     # Network communication with Stripe failed
+        #     return HttpResponseRedirect(reverse('payment-error'))
+        # except stripe.error.StripeError as e:
+        #     # Display a very generic error to the user, and maybe send
+        #     # yourself an email
+        #     return HttpResponseRedirect(reverse('payment-error'))
+        # except Exception as e:
+        #     # Something else happened, completely unrelated to Stripe
+        #     return HttpResponseRedirect(reverse('payment-error'))
+    else:
+        return render(request, 'payment/checkout.html', {'public_key': public_key})
