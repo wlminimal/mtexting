@@ -2,25 +2,51 @@ from django.shortcuts import render
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from .models import StripeAccount
 
 import stripe
 
 
+@login_required
 def checkout(request):
     public_key = settings.STRIPE_PUBLIC_TOKEN
     stripe.api_key = settings.STRIPE_PRIVATE_TOKEN
 
     if request.method == 'POST':
         token = request.POST.get('stripeToken')
-        charge = stripe.Charge.create(
-            amount=5000,
-            description="mTexting",
-            source=token,
-            currency="usd"
-        )
+        user = request.user
+        amount = request.POST.get('amount')
+        # Must return stripe customer id
+        stripe_customer = user.stripe_customer.stripe_customer
+        if stripe_customer.source is not None:
+            # user has a card info?
+
+            charge = stripe.Charge.create(
+                amount=amount,
+                description="mTexting",
+                customer=stripe_customer,
+                currency="usd"
+            )
+            return HttpResponseRedirect(reverse('thank-you'))
+        else:
+            # First time payment
+            stripe_customer.source = token
+            # Charge using new customer.id
+            charge = stripe.Charge.create(
+                amount=amount,
+                description=str(amount),
+                source=stripe_customer.id,
+                currency="usd"
+            )
+
+            return HttpResponseRedirect(reverse('thank-you'))
+
         # Send Email?
 
-        return HttpResponseRedirect(reverse('thank-you'))
+
+        # Comment out for testing purpose
+
         # try:
         #     charge = stripe.charge.create(
         #         amount=5000,
