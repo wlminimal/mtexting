@@ -15,7 +15,7 @@ urlpatterns = [
     # User management
     url(r'^users/', include('mtexting.users.urls', namespace='users')),
     url(r'^accounts/', include('allauth.urls')),
-
+    url(r'^payment/', include('mtexting.payment.urls')),
     # Your stuff: custom urls includes go here
 
 

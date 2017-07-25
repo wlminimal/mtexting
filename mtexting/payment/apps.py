@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class PaymentConfig(AppConfig):
-    name = 'payment'
+    name = 'mtexting.payment'
+    verbose_name = 'Payments'

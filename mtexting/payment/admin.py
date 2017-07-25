@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import StripeAccount
 
-# Register your models here.
+
+@admin.register(StripeAccount)
+class StripeAccountAdmin(admin.ModelAdmin):
+    list_display = ('user', 'stripe_id', 'created_at', 'modifed')
