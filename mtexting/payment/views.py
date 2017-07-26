@@ -28,31 +28,7 @@ def checkout(request):
                 customer=stripe_customer,
                 currency="usd"
             )
-<<<<<<< HEAD
-        except stripe.error.CardError as e:
-            # Since it's a decline, stripe.error.CardError will be caught
-            body = e.json_body
-            err = body['error']
-        except stripe.error.RateLimitError as e:
-            # Too many requests made to the API too quickly
 
-        except stripe.error.InvalidRequestError as e:
-          # Invalid parameters were supplied to Stripe's API
-
-        except stripe.error.AuthenticationError as e:
-          # Authentication with Stripe's API failed
-          # (maybe you changed API keys recently)
-
-        except stripe.error.APIConnectionError as e:
-          # Network communication with Stripe failed
-
-        except stripe.error.StripeError as e:
-          # Display a very generic error to the user, and maybe send
-          # yourself an email
-
-        except Exception as e:
-          # Something else happened, completely unrelated to Stripe
-=======
             return HttpResponseRedirect(reverse('thank-you'))
         else:
             # First time payment
@@ -111,4 +87,3 @@ def checkout(request):
         #     return HttpResponseRedirect(reverse('payment-error'))
     else:
         return render(request, 'payment/checkout.html', {'public_key': public_key})
->>>>>>> 9b0797bd88ec6e5c6c0e218cbf4030dac3925845

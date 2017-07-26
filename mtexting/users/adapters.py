@@ -54,7 +54,8 @@ class AccountAdapter(DefaultAccountAdapter):
         if commit:
             user.save()
 
-        credit = Credit.objects.create(user=user)
+        credit = Credit.objects.create(user=user,
+                                       firsttime_user=True)
         stripe_account = StripeAccount.objects.create(user=user,
                                                       stripe_id=customer.id)
 
