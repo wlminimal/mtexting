@@ -10,9 +10,9 @@ import stripe
 @admin.register(Credit)
 class CreditAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('Credit', {'fields': ('point',)}),
+        ('Credit', {'fields': ('credit',)}),
     )
-    list_display = ['user', 'point', ]
+    list_display = ['credit', ]
 
 
 class PlanCreationForm(forms.ModelForm):
@@ -30,14 +30,14 @@ class PlanCreationForm(forms.ModelForm):
 
     class Meta:
         model = Plan
-        fields = ('name', 'plan_id', 'amount', 'currency', 'interval')
+        fields = ('name', 'plan_id', 'amount', 'currency', 'interval', 'credit')
 
 
 class PlanChangeForm(forms.ModelForm):
     # Only editable name field
     class Meta:
         model = Plan
-        fields = ('name', )
+        fields = ('name', 'credit', )
 
 
 def delete_plan_actions(modeladmin, request, queryset):

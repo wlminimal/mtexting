@@ -5,6 +5,8 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from plan.models import Plan, Credit
+
 
 @python_2_unicode_compatible
 class User(AbstractUser):
@@ -15,10 +17,27 @@ class User(AbstractUser):
     company_name = models.CharField(_('Company Name'), blank=True, max_length=255)
     mobile_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                   message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    mobile_number = models.CharField(_('Mobile Number'), blank=True, validators=[mobile_regex]
-                                     ,max_length=15)
+    mobile_number = models.CharField(_('Mobile Number'), blank=True,
+                                    validators=[mobile_regex]
+                                    , max_length=15)
+    # TODO: Make a Twillio User object separately
     account_sid = models.CharField(_('Account SID'), blank=True, max_length=255, default="twilio_sid")
     account_name = models.CharField(_('Account Name'), blank=True, max_length=255, default="account name")
+
+    plan = models.ForeignKey(
+        Plan,
+        on_delete=models.CASCADE,
+        related_name='subscriber',
+        null=True,
+        blank=True
+    )
+    credit = models.ForeignKey(
+        Credit,
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.username
