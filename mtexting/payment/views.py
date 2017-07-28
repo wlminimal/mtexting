@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from .models import StripeAccount
+from .utility import set_stripe_key, create_charge
 
 import stripe
 
@@ -11,40 +12,30 @@ import stripe
 @login_required
 def checkout(request):
     public_key = settings.STRIPE_PUBLIC_TOKEN
-    stripe.api_key = settings.STRIPE_PRIVATE_TOKEN
+    stripe = set_stripe_key(settings.STRIPE_PRIVATE_TOKEN)
 
     if request.method == 'POST':
         token = request.POST.get('stripeToken')
         user = request.user
         amount = request.POST.get('amount')
+        amount = int(amount) * 100
         # Must return stripe customer id
         stripe_customer = user.stripe_customer.stripe_customer
-        if stripe_customer.source is not None:
-            # user has a card info?
 
-            charge = stripe.Charge.create(
-                amount=amount,
-                description="mTexting",
-                customer=stripe_customer,
-                currency="usd"
-            )
+        # First time payment
+        stripe_customer.source = token
+        # Charge using new customer.id
+        charge = create_charge(
+            amount=amount,
+            description="mTexting",
+            customer=None,
+            currency="usd",
+            source=token
+        )
 
-            return HttpResponseRedirect(reverse('thank-you'))
-        else:
-            # First time payment
-            stripe_customer.source = token
-            # Charge using new customer.id
-            charge = stripe.Charge.create(
-                amount=amount,
-                description=str(amount),
-                source=stripe_customer.id,
-                currency="usd"
-            )
-
-            return HttpResponseRedirect(reverse('thank-you'))
+        return HttpResponseRedirect(reverse('payment:thank-you'))
 
         # Send Email?
-
 
         # Comment out for testing purpose
 

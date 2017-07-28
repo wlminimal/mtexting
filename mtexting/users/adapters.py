@@ -1,6 +1,6 @@
 from django.conf import settings
-from plan.models import Credit
 from mtexting.payment.models import StripeAccount
+from plan.models import Plan
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
@@ -41,21 +41,30 @@ class AccountAdapter(DefaultAccountAdapter):
         # TODO : Check duplicate friendly_name in twilio account,
         # if there is a dupulicate name, add random number
         # at the end of friendly_name.
-        account = client.api.accounts.create(friendly_name=user.username)
-        user.account_sid = account.sid
-        user.account_name = account.friendly_name
+        # account = client.api.accounts.create(friendly_name=user.username)
+        # user.account_sid = account.sid
+        # user.account_name = account.friendly_name
 
         # Create a STRIPE account
         stripe.api_key = settings.STRIPE_PRIVATE_TOKEN
         customer = stripe.Customer.create(email=user.email)
 
         user.stripe_id = customer.id
+        user.credit = 200  # Free creidt at signup
+        # Subscribe to Free plan
+        free_plan_id = 'free'
+        free_plan = Plan.objects.get(plan_id=free_plan_id)
+
+        stripe.Subscription.create(
+            customer=customer.id,
+            plan=free_plan_id
+        )
+
+        user.plan = free_plan
 
         if commit:
             user.save()
 
-        credit = Credit.objects.create(user=user,
-                                       firsttime_user=True)
         stripe_account = StripeAccount.objects.create(user=user,
                                                       stripe_id=customer.id)
 

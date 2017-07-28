@@ -3,16 +3,8 @@ from django.contrib import admin
 from django.contrib import messages
 from django.conf import settings
 
-from .models import Credit, Plan
+from .models import Plan
 import stripe
-
-
-@admin.register(Credit)
-class CreditAdmin(admin.ModelAdmin):
-    fieldsets = (
-        ('Credit', {'fields': ('credit',)}),
-    )
-    list_display = ['credit', ]
 
 
 class PlanCreationForm(forms.ModelForm):
@@ -30,14 +22,14 @@ class PlanCreationForm(forms.ModelForm):
 
     class Meta:
         model = Plan
-        fields = ('name', 'plan_id', 'amount', 'currency', 'interval', 'credit')
+        fields = ('name', 'plan_id', 'amount', 'currency', 'interval', )
 
 
 class PlanChangeForm(forms.ModelForm):
     # Only editable name field
     class Meta:
         model = Plan
-        fields = ('name', 'credit', )
+        fields = ('name', )
 
 
 def delete_plan_actions(modeladmin, request, queryset):

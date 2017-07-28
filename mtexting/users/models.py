@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from plan.models import Plan, Credit
+from plan.models import Plan
 
 
 @python_2_unicode_compatible
@@ -23,20 +23,13 @@ class User(AbstractUser):
     # TODO: Make a Twillio User object separately
     account_sid = models.CharField(_('Account SID'), blank=True, max_length=255, default="twilio_sid")
     account_name = models.CharField(_('Account Name'), blank=True, max_length=255, default="account name")
-
+    credit = models.IntegerField(default=0)
     plan = models.ForeignKey(
         Plan,
         on_delete=models.CASCADE,
         related_name='subscriber',
         null=True,
         blank=True
-    )
-    credit = models.ForeignKey(
-        Credit,
-        null=True,
-        blank=True,
-        related_name='+',
-        on_delete=models.CASCADE
     )
 
     def __str__(self):
